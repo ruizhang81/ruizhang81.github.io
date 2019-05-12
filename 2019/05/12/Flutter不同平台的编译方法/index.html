@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="chinese">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="大瑞">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="大瑞">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Flutter不同平台的编译方法 · 大瑞&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/head.jpeg">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">夏天来啦</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Flutter不同平台的编译方法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">夏天来啦</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Flutter不同平台的编译方法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="flutter">flutter</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.2k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/05/12</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h4 id="一、flutter是google推出的一个跨平台ui框架"><a href="#一、flutter是google推出的一个跨平台ui框架" class="headerlink" title="一、flutter是google推出的一个跨平台ui框架"></a>一、flutter是google推出的一个跨平台ui框架</h4><p>1、支持ios和android的release版本已经出了<br>官方主页:<a href="https://flutter.dev/" target="_blank" rel="noopener">https://flutter.dev/</a><br>github:<a href="https://github.com/flutter/flutter">https://github.com/flutter/flutter</a></p>
+<p>2、 mac,linux,windows,Fuchsia操作系统的桌面版也有一个项目支持<br>目前还在测试阶段<br>github:<a href="https://github.com/google/flutter-desktop-embedding">https://github.com/google/flutter-desktop-embedding</a></p>
+<p>3、 对于web，google也推出了一个实验性项目:Hummingbird 目前还没有开源</p>
+<h4 id="二、flutter为移动平台上的编译"><a href="#二、flutter为移动平台上的编译" class="headerlink" title="二、flutter为移动平台上的编译"></a>二、flutter为移动平台上的编译</h4><p>1、下载sdk,并配置ide <a href="https://flutterchina.club/get-started/install/" target="_blank" rel="noopener">https://flutterchina.club/get-started/install/</a><br>2、编译一个Android平台的apk<br>3、编译ios平台，您需要安装xcode<br>然后再打开ios项目中的. xcodeproj文件，编译之后，之后的调试可以在android studio或者vs code里进行。</p>
+<p><img src="Flutter不同平台的编译方法/1179750-fb900682032389b8.png" alt="android studio截图"></p>
+<p><img src="Flutter不同平台的编译方法/1179750-ec97328343ff7f04.png" alt="vs code截图"></p>
+<h4 id="三、flutter为mac平台编译"><a href="#三、flutter为mac平台编译" class="headerlink" title="三、flutter为mac平台编译"></a>三、flutter为mac平台编译</h4><p>1、下载<a href="https://github.com/google/flutter-desktop-embedding">https://github.com/google/flutter-desktop-embedding</a><br>2、下载<a href="https://github.com/flutter/flutter">https://github.com/flutter/flutter</a><br>3、配置flutter环境变量(flutter和flutter-desktop-embedding要在同一目录)<br>     按照这个操作一下<a href="https://github.com/google/flutter-desktop-embedding/tree/master/library">https://github.com/google/flutter-desktop-embedding/tree/master/library</a><br>4、添加flutter的china支持的环境变量<br>      PUB_HOSTED_URL=<a href="https://pub.flutter-io.cn" target="_blank" rel="noopener">https://pub.flutter-io.cn</a><br>      FLUTTER_STORAGE_BASE_URL=<a href="https://storage.flutter-io.cn并" target="_blank" rel="noopener">https://storage.flutter-io.cn并</a><br>5、修改flutter\packages\flutter_tools\gradle\flutter.gradle改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven&#123; url &apos;https://maven.aliyun.com/repository/google&apos; &#125;</span><br><span class="line">        maven&#123; url &apos;https://maven.aliyun.com/repository/jcenter&apos; &#125;</span><br><span class="line">        maven&#123; url &apos;http://maven.aliyun.com/nexus/content/groups/public&apos;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;com.android.tools.build:gradle:3.2.1&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>6、执行flutter doctor<br>7、然后用xcode打开flutter-desktop-embedding/example/macos_fde/ExampleEmbedder.xcodeproj运行会自动下载依赖</p>
+<h4 id="四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）"><a href="#四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）" class="headerlink" title="四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）"></a>四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）</h4><p>1、需要安装windows7 sp1及以上的64位操作系统(原生镜像安装，不要使用ghost安装)，推荐使用windows10<br>2、安装.net framework4.7.2 dev<br>3、安装git<br>4、安装virtual studio 2017<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">选中左边&lt;使用c++的桌面开发&gt;  </span><br><span class="line">选中右边&lt;windows8.1 sdk和ucrt sdk&gt;</span><br><span class="line">选中右边&lt;用于x86和x64的virtual c++ MFC&gt;</span><br><span class="line">选中右边&lt;windows 10sdk 10.0.17134.0&gt;</span><br><span class="line">选中左边&lt;virtual studio扩展开发&gt;  </span><br><span class="line"></span><br><span class="line">选中左边&lt;通用windows平台开发&gt; </span><br><span class="line">选中右边&lt;C++通用windows平台工具&gt;</span><br></pre></td></tr></table></figure></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">点击单个组件 </span><br><span class="line">选中&lt;windows通用c运行时&gt;</span><br></pre></td></tr></table></figure>
+<p>5、新建一个文件夹<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmd进入</span><br><span class="line">git clone https://github.com/flutter/flutter.git</span><br><span class="line">git clone https://github.com/google/flutter-desktop-embedding.git</span><br></pre></td></tr></table></figure></p>
+<p>6、下载ninja并配置环境变量<br>7、下载gn并配置环境变量<br>8、安装python并配置环境变量<br>9、配置flutter环境变量<br>10、添加flutter的china支持的环境变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PUB_HOSTED_URL=https://pub.flutter-io.cn</span><br><span class="line">FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</span><br></pre></td></tr></table></figure></p>
+<p>11、修改flutter\packages\flutter_tools\gradle\flutter.gradle改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        maven&#123; url &apos;https://maven.aliyun.com/repository/google&apos; &#125;</span><br><span class="line">        maven&#123; url &apos;https://maven.aliyun.com/repository/jcenter&apos; &#125;</span><br><span class="line">        maven&#123; url &apos;http://maven.aliyun.com/nexus/content/groups/public&apos;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath &apos;com.android.tools.build:gradle:3.2.1&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>12、执行flutter doctor &lt;下载dart及更新flutter插件&gt;<br>13、进入flutter-desktop-embedding<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">运行tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src</span><br></pre></td></tr></table></figure></p>
+<p>14、如果要编译出能在其他windows电脑运行的项目，需要静态编译项目，由于当前工程是依赖glfw(一个opengl的封装库)的，所以我们要静态编译glfw</p>
+<p><1> 下载glfw源码 <a href="https://www.glfw.org/" target="_blank" rel="noopener">https://www.glfw.org/</a>  </1></p>
+<p><2> 下载cmake  </2></p>
+<p><3> 用cmake打开glfw源码库，设置目标位置为glfw/build  </3></p>
+<p><4> 先configure  选择optional platform为x64  </4></p>
+<p><5> 再执行generate  </5></p>
+<p><6> 用virtual studio打开build目录的glfw.sln文件 </6></p>
+<p><7> 右键点击解决方案下的GLFW3中的glfw，选择属性  </7></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">配置属性 &gt; 常规 &gt; MFC的使用 选择 使用在静态库中使用MFC  </span><br><span class="line">c/c++ &gt; 代码生成 &gt; 运行库 选择 多线程调试(/MTd)</span><br></pre></td></tr></table></figure>
+<p><8> 右键选择glfw然后选择生成  </8></p>
+<p><9> 修改flutter-desktop-embedding\tools\dart_tools\bin\fetch_glfw.dart把main函数里面全部注释掉  </9></p>
+<p><10> 修改flutter-desktop-embedding\build\win\toolchain\BUILD.gn把里面的/MDd改为/MTd(有两个地方哦)  </10></p>
+<p><11> 在flutter-desktop-embedding目录下运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tools\gn_dart gen out</span><br><span class="line">ninja -C out flutter_embedder</span><br></pre></td></tr></table></figure></11></p>
+<p><12> 在运行中，只要生成了flutter-desktop-embedding\out\gen\glfw\GLFW文件夹后，就把之前编译好的的文件(build/src/Debug/glfw3.lib)和(include/GLFW/里的文件)拷贝到flutter-desktop-embedding\out\gen\glfw\GLFW中  </12></p>
+<p>15、打开flutter-desktop-embedding\example\windows_fde\Example Embedder.sln<br>16、右键解决方案下的项目，点击属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">配置属性 &gt; 常规 &gt; MFC的使用 选择 使用在静态库中使用MFC  </span><br><span class="line">c/c++ &gt; 代码生成 &gt; 运行库 选择 多线程调试(/MTd)</span><br></pre></td></tr></table></figure></p>
+<p>17、hosts配置s3.amazonaws.com<br>18、在flutter-desktop-embedding\example下运行flutter packages get获取依赖包<br>19、在virtual studio中选择debug，然后点击生成，这个时候就会在flutter-desktop-embedding\example\build\windows_fde\x64\Debug\GLFW Example下生成可执行文件及资源文件，用winrar打包成exe，拷贝到别的电脑上就可以执行运行了</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://github.com/ruizhang81/ruizhang81.github.io">大瑞</a>
+            </p><p>原文链接：<a href="https://github.com/ruizhang81/ruizhang81.github.io/2019/05/12/Flutter不同平台的编译方法/">https://github.com/ruizhang81/ruizhang81.github.io/2019/05/12/Flutter不同平台的编译方法/</a>
+            </p><p>发表日期：<a href="https://github.com/ruizhang81/ruizhang81.github.io/2019/05/12/Flutter不同平台的编译方法/">May 12th 2019, 12:04:26 pm</a>
+            </p><p>更新日期：<a href="https://github.com/ruizhang81/ruizhang81.github.io/2019/05/12/Flutter不同平台的编译方法/">May 12th 2019, 3:27:25 pm</a>
+            </p><p>版权声明：</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2019/05/12/WebAssembly入门demo/" title="WebAssembly入门demo">
+                    <div class="nextTitle">WebAssembly入门demo</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:ruizhang81@gmail.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/ruizhang81" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/weixin.png">
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、flutter是google推出的一个跨平台ui框架"><span class="toc-number">1.</span> <span class="toc-text">一、flutter是google推出的一个跨平台ui框架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、flutter为移动平台上的编译"><span class="toc-number">2.</span> <span class="toc-text">二、flutter为移动平台上的编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#三、flutter为mac平台编译"><span class="toc-number">3.</span> <span class="toc-text">三、flutter为mac平台编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）"><span class="toc-number">4.</span> <span class="toc-text">四、flutter为windows平台编译（目前编译出的可执行文件只支持64位操作系统）</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 6
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/mac上编译opencv-viz模块并运行demo/">mac上编译opencv+viz模块并运行demo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/iptables使用/">iptables使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/Node配置c-支持/">Node配置c++支持</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/WebAssembly多线程demo/">WebAssembly多线程demo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/WebAssembly入门demo/">WebAssembly入门demo</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/Flutter不同平台的编译方法/">Flutter不同平台的编译方法</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="flutter"><span class="iconfont-archer">&#xe606;</span>flutter</span>
+    
+        <span class="sidebar-tag-name" data-tags="WebAssembly"><span class="iconfont-archer">&#xe606;</span>WebAssembly</span>
+    
+        <span class="sidebar-tag-name" data-tags="node"><span class="iconfont-archer">&#xe606;</span>node</span>
+    
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="opencv"><span class="iconfont-archer">&#xe606;</span>opencv</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "大瑞"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
