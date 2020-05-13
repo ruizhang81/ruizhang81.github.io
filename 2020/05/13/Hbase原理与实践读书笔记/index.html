@@ -22,7 +22,7 @@
     <meta name="description" content>
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>mac上编译opencv+viz模块并运行demo · 大瑞的小站</title>
+    <title>HBase原理与实践读书笔记 · 大瑞的小站</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/">夏天来啦</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">mac上编译opencv+viz模块并运行demo</a>
+                <a href="#" class="post-name">HBase原理与实践读书笔记</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            mac上编译opencv+viz模块并运行demo
+            HBase原理与实践读书笔记
             <!-- 404 -->
             
         </h1>
@@ -266,18 +266,18 @@ height:50vh;
                 
                     <div class="post-intro-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="opencv">opencv</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="HBase">HBase</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">430</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">561</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2019/05/12</span>
+                    <span class="post-intro-time">2020/05/13</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -401,27 +401,49 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>由于mac上 brew install opencv是不带viz模块的，所以需要源码编译</p>
-<h3 id="1、下载opencv和vtk源码"><a href="#1、下载opencv和vtk源码" class="headerlink" title="1、下载opencv和vtk源码"></a>1、下载opencv和vtk源码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opencv:https://opencv.org/releases.html</span><br><span class="line"></span><br><span class="line">vtk:https://www.vtk.org/download/</span><br></pre></td></tr></table></figure>
-<p>当然也可以通过git clone</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">git <span class="built_in">clone</span>  https://gitlab.kitware.com/vtk/vtk.git VTK</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> VTK</span><br><span class="line"></span><br><span class="line">git checkout vX.X.X</span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/opencv/opencv.git </span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> opencv</span><br><span class="line"></span><br><span class="line">git checkout X.X.X</span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/opencv/opencv_contrib.git</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> opencv_contrib </span><br><span class="line"></span><br><span class="line">git checkout X.X.X</span><br></pre></td></tr></table></figure>
-<h3 id="2、编译"><a href="#2、编译" class="headerlink" title="2、编译"></a>2、编译</h3><p>需要安装一个CMAKE</p>
-<h4 id="1-编译vtk"><a href="#1-编译vtk" class="headerlink" title="(1) 编译vtk"></a>(1) 编译vtk</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1、source code配置为vtk目录</span><br><span class="line"></span><br><span class="line">2、binaries配置为vtk/build目录</span><br><span class="line"></span><br><span class="line">3、configure的时候要选择xcode</span><br><span class="line"></span><br><span class="line">4、配置 VTK_RENDERING_BACKEND为OpenGL</span><br><span class="line"></span><br><span class="line">5、再configure再generate</span><br><span class="line"></span><br><span class="line">6、然后打开xcode 需要修改/usr/local目录，所以需要root权限</span><br><span class="line"></span><br><span class="line">7、得这么打开sudo /Applications/Xcode.app/Contents/MacOS/Xcode</span><br><span class="line"></span><br><span class="line">8、然后在xocde里打开vtk/build，先跑ALL BUILD再跑install</span><br></pre></td></tr></table></figure>
-<h4 id="2-编译opencv"><a href="#2-编译opencv" class="headerlink" title="(2) 编译opencv"></a>(2) 编译opencv</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、source code配置为opencv目录</span><br><span class="line"></span><br><span class="line">2、binaries配置为opencv/build目录</span><br><span class="line"></span><br><span class="line">3、配置OPENCV_EXTRA_MOULES_PATH**设置为*/opencv_contrib/modules</span><br><span class="line"></span><br><span class="line">4、配置VTK_DIR**设置为vtk/build</span><br><span class="line"></span><br><span class="line">5、然后在xocde里打开opencv/build，先跑ALL BUILD再跑install</span><br></pre></td></tr></table></figure>
-<h3 id="3、加环境变量"><a href="#3、加环境变量" class="headerlink" title="3、加环境变量"></a>3、加环境变量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig</span><br><span class="line"></span><br><span class="line">这里要特别注意了，因为默认opencv.pc是没有加入viz模块的所以在/usr/local/lib/pkgconfig/opencv.pc里的</span><br><span class="line">Libs:后面加上-lopencv_viz</span><br></pre></td></tr></table></figure>
-<h3 id="4、运行"><a href="#4、运行" class="headerlink" title="4、运行"></a>4、运行</h3><p>1、如果是在命令行运行，MakeFile中加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CFLAGS += `pkg-config --cflags --libs opencv`</span><br></pre></td></tr></table></figure></p>
-<p>2、如果是在xcode里运行，Build Settings-Other Linker Flags加入<br>opencv.pc里Libs后的内容，这是在我的xcode里加的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-L/usr/local/lib -lopencv_viz -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_dnn_objdetect -lopencv_dpm -lopencv_face -lopencv_photo -lopencv_fuzzy -lopencv_hfs -lopencv_img_hash -lopencv_line_descriptor -lopencv_optflow -lopencv_reg -lopencv_rgbd -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_surface_matching -lopencv_tracking -lopencv_datasets -lopencv_dnn -lopencv_plot -lopencv_xfeatures2d -lopencv_shape -lopencv_video -lopencv_ml -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_flann -lopencv_xobjdetect -lopencv_imgcodecs -lopencv_objdetect -lopencv_xphoto -lopencv_imgproc -lopencv_core</span><br></pre></td></tr></table></figure></p>
-<p>PS:centos服务器上按这个步骤也可以，只是编译的目录是在/usr/lib64下<br>如果运行带界面的demo会报错 DISPLAY(ABOUT)</p>
-<p>参考:<a href="https://www.jianshu.com/p/53ddb90d6dc9" target="_blank" rel="noopener">【教程】使用CMake编译含有viz.hpp的OpenCV310+OpenCV contrib</a></p>
+        <h3 id="HBase原理与实践读书笔记"><a href="#HBase原理与实践读书笔记" class="headerlink" title="HBase原理与实践读书笔记"></a>HBase原理与实践读书笔记</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><h5 id="google三论文"><a href="#google三论文" class="headerlink" title="google三论文"></a>google三论文</h5><p>1、GFS：Google File System （数据分布式存储）<br>2、MapReduce：Simplefied Data Processing on Large Clusters  数据的分析计算<br>3、BigTale：A Distributed Storage System for Structured Data  高效读写  </p>
+<p>一、HBase是在HDFS之上的分布式KV数据库系统  </p>
+<p>二、HBase数据模型:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;rowkey11&quot;,&quot;技术类书籍&quot;,&quot;HBase原理与实践&quot;,&quot;put&quot;,&quot;t8&quot;&#125; =&gt; &quot;书籍的内容....&quot;</span><br></pre></td></tr></table></figure></p>
+<p>三、HBase体系结构<br><img src="Hbase原理与实践读书笔记/426671-794d662b7ebba360.png" alt="体系结构"><br>1、zk保证高可用<br>2、hdfs保证存储<br>3、HBase负责读写功能 </p>
+<ul>
+<li>写缓存 memstore  (region下管理多个store 每个store有1个memstore和多个HFile)</li>
+<li>读缓存 blockCache (直接管理block)</li>
+<li>分布式 WAL(Hlog)</li>
+</ul>
+<p>四、HBase系统特征</p>
+<ul>
+<li>优点:<br>1、容量大<br>2、良好的扩展性  可以简单堆机器来实现扩容<br>3、稀疏性 不浪费空间<br>4、高性能，随机读取及小范围读取 性能强劲<br>5、数据多版本存储<br>6、支持多版本数据过期删除<br>7、Hadoop原生支持，可针对HBase的优化</li>
+<li>缺点<br>1、不支持聚合运算<br>2、技术角度不支持二级索引，业务角度支持<br>3、只支持单行事务</li>
+</ul>
+<h4 id="数据结构和算法"><a href="#数据结构和算法" class="headerlink" title="数据结构和算法"></a>数据结构和算法</h4><blockquote>
+<p>程序=算法+数据结构  </p>
+</blockquote>
+<p>1、列簇（store）是LSM树</p>
+<blockquote>
+<p>类似B+树 LSM树对写入更加友好，因为他会将写入操作处理成一次顺序写<br>内存和磁盘上都是有序的，key排序规则: rowkey+columnFamily+column+timestamp+type<br>内存部分（跳跃表），</p>
+</blockquote>
+<p>2、LSM内存部分:跳跃表，增删查 O(logN) 一旦超过阈值，将会flush到磁盘上 </p>
+<blockquote>
+<p>因为不断的写入，所以会分裂，用两个memstore来保证写性能稳定  </p>
+</blockquote>
+<p>3、LSM磁盘部分:布隆过滤器  </p>
+<blockquote>
+<p>写入的时候都是顺序写，为了照顾查询的需求，所以会合并（异步）<br>compact分为minor和major</p>
+</blockquote>
+<p>4、布隆过滤器</p>
+<blockquote>
+<p>解决了如何在磁盘上查看一个元素是否在集合里</p>
+</blockquote>
+<p>1、把集合里所有的元素<code>hash若干下</code>，然后组合成一个01数组K<br>2、将需要查询的元素也<code>hash若干下</code>，得到一个01数组K1，如果K包含K1，则集合里可能包含该元素，反之必不包含该元素</p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="https://ruizhang81.github.io">大瑞</a>
-            </p><p>原文链接：<a href="https://ruizhang81.github.io/2019/05/12/mac上编译opencv-viz模块并运行demo/">https://ruizhang81.github.io/2019/05/12/mac上编译opencv-viz模块并运行demo/</a>
-            </p><p>发表日期：<a href="https://ruizhang81.github.io/2019/05/12/mac上编译opencv-viz模块并运行demo/">May 12th 2019, 3:44:44 pm</a>
-            </p><p>更新日期：<a href="https://ruizhang81.github.io/2019/05/12/mac上编译opencv-viz模块并运行demo/">May 12th 2019, 3:45:00 pm</a>
+            </p><p>原文链接：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/</a>
+            </p><p>发表日期：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">May 13th 2020, 12:04:26 pm</a>
+            </p><p>更新日期：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">May 13th 2020, 2:22:07 pm</a>
             </p><p>版权声明：</p>
         </div>
     
@@ -429,17 +451,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href="/2020/05/13/Hbase原理与实践读书笔记/" title="HBase原理与实践读书笔记">
-                    <div class="nextTitle">HBase原理与实践读书笔记</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href="/2019/05/12/iptables使用/" title="iptables使用">
-                    <div class="prevTitle">iptables使用</div>
+                <a href="/2019/05/12/mac上编译opencv-viz模块并运行demo/" title="mac上编译opencv+viz模块并运行demo">
+                    <div class="prevTitle">mac上编译opencv+viz模块并运行demo</div>
                 </a>
             
         </li>
@@ -558,7 +575,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、下载opencv和vtk源码"><span class="toc-number">1.</span> <span class="toc-text">1、下载opencv和vtk源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、编译"><span class="toc-number">2.</span> <span class="toc-text">2、编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-编译vtk"><span class="toc-number">2.1.</span> <span class="toc-text">(1) 编译vtk</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-编译opencv"><span class="toc-number">2.2.</span> <span class="toc-text">(2) 编译opencv</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、加环境变量"><span class="toc-number">3.</span> <span class="toc-text">3、加环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、运行"><span class="toc-number">4.</span> <span class="toc-text">4、运行</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#HBase原理与实践读书笔记"><span class="toc-number">1.</span> <span class="toc-text">HBase原理与实践读书笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#google三论文"><span class="toc-number">1.1.1.</span> <span class="toc-text">google三论文</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据结构和算法"><span class="toc-number">1.2.</span> <span class="toc-text">数据结构和算法</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
