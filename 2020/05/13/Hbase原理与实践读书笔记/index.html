@@ -272,7 +272,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">561</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">3.3k</span>阅读时长: <span class="post-count reading-time">12 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -401,40 +401,198 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h3 id="HBase原理与实践读书笔记"><a href="#HBase原理与实践读书笔记" class="headerlink" title="HBase原理与实践读书笔记"></a>HBase原理与实践读书笔记</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><h5 id="google三论文"><a href="#google三论文" class="headerlink" title="google三论文"></a>google三论文</h5><p>1、GFS：Google File System （数据分布式存储）<br>2、MapReduce：Simplefied Data Processing on Large Clusters  数据的分析计算<br>3、BigTale：A Distributed Storage System for Structured Data  高效读写  </p>
-<p>一、HBase是在HDFS之上的分布式KV数据库系统  </p>
-<p>二、HBase数据模型:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;rowkey11&quot;,&quot;技术类书籍&quot;,&quot;HBase原理与实践&quot;,&quot;put&quot;,&quot;t8&quot;&#125; =&gt; &quot;书籍的内容....&quot;</span><br></pre></td></tr></table></figure></p>
-<p>三、HBase体系结构<br><img src="Hbase原理与实践读书笔记/426671-794d662b7ebba360.png" alt="体系结构"><br>1、zk保证高可用<br>2、hdfs保证存储<br>3、HBase负责读写功能 </p>
+        <h3 id="HBase原理与实践读书笔记"><a href="#HBase原理与实践读书笔记" class="headerlink" title="HBase原理与实践读书笔记"></a>HBase原理与实践读书笔记</h3><h4 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h4><h5 id="google三论文"><a href="#google三论文" class="headerlink" title="google三论文"></a>google三论文</h5><p>1、GFS：Google File System （数据分布式存储）<br>2、MapReduce：Simplefied Data Processing on Large Clusters  数据的分析计算<br>3、BigTale：A Distributed Storage System for Structured Data  高效读写  </p>
+<h5 id="HBase是在HDFS之上的分布式KV数据库系统"><a href="#HBase是在HDFS之上的分布式KV数据库系统" class="headerlink" title="HBase是在HDFS之上的分布式KV数据库系统"></a>HBase是在HDFS之上的分布式KV数据库系统</h5><h5 id="HBase数据模型"><a href="#HBase数据模型" class="headerlink" title="HBase数据模型:"></a>HBase数据模型:</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;rowkey11&quot;,&quot;技术类书籍&quot;,&quot;HBase原理与实践&quot;,&quot;put&quot;,&quot;t8&quot;&#125; =&gt; &quot;书籍的内容....&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="HBase体系结构"><a href="#HBase体系结构" class="headerlink" title="HBase体系结构"></a>HBase体系结构</h5><p><img src="1.png" alt="体系结构">  </p>
+<p>1、zookeeper保证高可用<br>2、hdfs保证存储<br>3、HBase负责读写功能 </p>
 <ul>
 <li>写缓存 memstore  (region下管理多个store 每个store有1个memstore和多个HFile)</li>
 <li>读缓存 blockCache (直接管理block)</li>
 <li>分布式 WAL(Hlog)</li>
 </ul>
-<p>四、HBase系统特征</p>
-<ul>
+<h5 id="HBase系统特征"><a href="#HBase系统特征" class="headerlink" title="HBase系统特征"></a>HBase系统特征</h5><ul>
 <li>优点:<br>1、容量大<br>2、良好的扩展性  可以简单堆机器来实现扩容<br>3、稀疏性 不浪费空间<br>4、高性能，随机读取及小范围读取 性能强劲<br>5、数据多版本存储<br>6、支持多版本数据过期删除<br>7、Hadoop原生支持，可针对HBase的优化</li>
-<li>缺点<br>1、不支持聚合运算<br>2、技术角度不支持二级索引，业务角度支持<br>3、只支持单行事务</li>
+<li>缺点<br>1、不支持聚合运算<br>2、技术角度不支持二级索引<br>3、只支持单行事务</li>
 </ul>
-<h4 id="数据结构和算法"><a href="#数据结构和算法" class="headerlink" title="数据结构和算法"></a>数据结构和算法</h4><blockquote>
+<h4 id="二、数据结构和算法"><a href="#二、数据结构和算法" class="headerlink" title="二、数据结构和算法"></a>二、数据结构和算法</h4><blockquote>
 <p>程序=算法+数据结构  </p>
 </blockquote>
-<p>1、列簇（store）是LSM树</p>
-<blockquote>
-<p>类似B+树 LSM树对写入更加友好，因为他会将写入操作处理成一次顺序写<br>内存和磁盘上都是有序的，key排序规则: rowkey+columnFamily+column+timestamp+type<br>内存部分（跳跃表），</p>
-</blockquote>
-<p>2、LSM内存部分:跳跃表，增删查 O(logN) 一旦超过阈值，将会flush到磁盘上 </p>
-<blockquote>
+<h5 id="列簇（store）是LSM树"><a href="#列簇（store）是LSM树" class="headerlink" title="列簇（store）是LSM树"></a>列簇（store）是LSM树</h5><p>1、类似B+树，LSM树对写入更加友好，因为他会将写入操作处理成一次顺序写，所以内存和磁盘上的数据都是有序的<br>2、磁盘部分，key排序规则: <code>rowkey+columnFamily+column+timestamp+type</code><br>3、内存部分（跳跃表），</p>
+<h5 id="LSM内存部分-跳跃表，增删查-O-logN-一旦超过阈值，将会flush到磁盘上"><a href="#LSM内存部分-跳跃表，增删查-O-logN-一旦超过阈值，将会flush到磁盘上" class="headerlink" title="LSM内存部分:跳跃表，增删查 O(logN) 一旦超过阈值，将会flush到磁盘上"></a>LSM内存部分:跳跃表，增删查 O(logN) 一旦超过阈值，将会flush到磁盘上</h5><blockquote>
 <p>因为不断的写入，所以会分裂，用两个memstore来保证写性能稳定  </p>
 </blockquote>
-<p>3、LSM磁盘部分:布隆过滤器  </p>
-<blockquote>
-<p>写入的时候都是顺序写，为了照顾查询的需求，所以会合并（异步）<br>compact分为minor和major</p>
-</blockquote>
-<p>4、布隆过滤器</p>
-<blockquote>
+<h5 id="LSM磁盘部分-布隆过滤器"><a href="#LSM磁盘部分-布隆过滤器" class="headerlink" title="LSM磁盘部分:布隆过滤器"></a>LSM磁盘部分:布隆过滤器</h5><p>1、写入的时候都是顺序写，为了照顾查询的需求，所以会合并（异步）<br>2、compact分为minor和major</p>
+<h5 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h5><blockquote>
 <p>解决了如何在磁盘上查看一个元素是否在集合里</p>
 </blockquote>
-<p>1、把集合里所有的元素<code>hash若干下</code>，然后组合成一个01数组K<br>2、将需要查询的元素也<code>hash若干下</code>，得到一个01数组K1，如果K包含K1，则集合里可能包含该元素，反之必不包含该元素</p>
+<p>1、把集合里所有的元素<code>hash若干下</code>，然后组合成一个01数组K<br>2、将需要查询的元素也<code>hash若干下</code>，得到一个01数组K1，如果K包含K1，则集合里可能包含该元素，反之必不包含该元素  </p>
+<p><code>HBase rowkey设计</code> 一般都是布隆过滤器的设计  </p>
+<blockquote>
+<p>三种策略 NONE:关闭 ROW:按照rowkey生成布隆过滤器(默认)ROWCOL:(rowkey+columnFamily+column)  </p>
+</blockquote>
+<h4 id="三、HBase依赖服务"><a href="#三、HBase依赖服务" class="headerlink" title="三、HBase依赖服务"></a>三、HBase依赖服务</h4><h5 id="zookeeper保证高可用"><a href="#zookeeper保证高可用" class="headerlink" title="zookeeper保证高可用"></a>zookeeper保证高可用</h5><p>1、HBase master节点高可用<br>2、RegionServer宕机后，zookeeper会迁移Region，但是会因为Locality会导致一些性能问题<br>3、分布式行锁  </p>
+<h5 id="HDFS"><a href="#HDFS" class="headerlink" title="HDFS"></a>HDFS</h5><p>1、HBaseClient -&gt; HBaseServer -&gt; DFSClient -&gt; HDFSClient -&gt; HDFSService<br>2、文件读取  </p>
+<ul>
+<li>locality 该文件存储在本地机器的字节数之和 / 该文件总字节数</li>
+<li>短路读  对那些Block落在和DFSClient同一台机器上的数据，可以不走TCP协议进行读取，而是直接由DFSClient向本机的DataNode请求对应Block的文件描述符（File Descriptor），然后创建一个BlockReaderLocal，通过fd进行数据读取，这样就节省了走本地TCP协议栈的开销。</li>
+</ul>
+<h4 id="四、HBase客户端"><a href="#四、HBase客户端" class="headerlink" title="四、HBase客户端"></a>四、HBase客户端</h4><blockquote>
+<p>对写很友好，因为对写做了大量优化  </p>
+</blockquote>
+<h5 id="随机读取"><a href="#随机读取" class="headerlink" title="随机读取"></a>随机读取</h5><p>1、读数据时，client会去请求HBase master（也是一个Region），找到hbase:meta表，把改表缓存到client端，然后从hbase:meta里查询应该去找哪个业务region<br>2、每次取数据时，类似于分块取的，而且这个策略是可以调整的<br>3、行锁CAS  </p>
+<h5 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h5><p>1、过滤器Filter，一条条扫描，发现不满足条件就读下一行<br>2、setStartRow，setStopRow 可以首先定位第一个rowkey，和终止rowkey<br>3、有limit<br>4、SingleColumnPageFilter，可以过滤rowkey,列簇，列，值<br>5、少量写和批量写，bulk load写是直接写入HFile，然后把HFile写入Region的  </p>
+<h4 id="五、RegionServer-HBase最核心的模块"><a href="#五、RegionServer-HBase最核心的模块" class="headerlink" title="五、RegionServer HBase最核心的模块"></a>五、RegionServer HBase最核心的模块</h4><h5 id="HLog"><a href="#HLog" class="headerlink" title="HLog"></a>HLog</h5><blockquote>
+<p>写入的时候，先写HLog，再写入memstore</p>
+</blockquote>
+<p>1、故障恢复，主从复制<br>2、文件存储<br>3、生命周期 </p>
+<h5 id="MemStore"><a href="#MemStore" class="headerlink" title="MemStore"></a>MemStore</h5><blockquote>
+<p>写缓存</p>
+</blockquote>
+<p>1、将随机写转换为顺序写，keyValue数据排序执行者，有合并功能（丢弃过期数据)还有读缓存功能<br>2、数据结构是两个跳跃表，支持异步落盘<br>3、GC问题 回收机制  </p>
+<h5 id="HFile"><a href="#HFile" class="headerlink" title="HFile"></a>HFile</h5><blockquote>
+<p>落盘文件</p>
+</blockquote>
+<p>1、逻辑结构  </p>
+<ul>
+<li>Scanned Block 顺序扫描读取(业务数据)  </li>
+<li>Non-scaned Block 元数据  </li>
+<li>Load-on-Open 打开时加载到内存 </li>
+<li>Trailer Hfile版本信息   </li>
+</ul>
+<p>2、物理结构  </p>
+<blockquote>
+<p>各种类型的block 都有对应着逻辑结构</p>
+<ul>
+<li>Trailer Block HFile版本信息，其他block的偏移量，一些统计量  </li>
+<li>Data Block 业务数据存储的最小单元</li>
+<li>布隆过滤器相关Block  </li>
+<li>索引相关Block 这个索引是在HFile里检索用的  </li>
+<li>root index Block,NonRoot index Block</li>
+</ul>
+</blockquote>
+<p>3、HFile V3版本  </p>
+<ul>
+<li>标签/权限  </li>
+</ul>
+<h5 id="BlockCache"><a href="#BlockCache" class="headerlink" title="BlockCache"></a>BlockCache</h5><p>1、LRUBlockCache  </p>
+<ul>
+<li>缓存分层  </li>
+<li>淘汰算法  </li>
+<li>该算法导致大量碎片，缺点:某种条件下会Full GC  </li>
+</ul>
+<p>2、SlabCache  </p>
+<blockquote>
+<p>一般配合LRUBlockCache使用，这种DoubleBlockCache依然有产生大量碎片的问题</p>
+</blockquote>
+<p>3、BucketCache</p>
+<blockquote>
+<p>可以设置JVM内存 非JVM内存，文件，有14种大小，避免了内存碎片问题<br>一般和LRUBlockCache混合使用</p>
+</blockquote>
+<p>1、内存组织形式<br>2、缓存写入，读取流程<br>3、工作模式<br>4、配置  </p>
+<h4 id="六、HBase读写流程"><a href="#六、HBase读写流程" class="headerlink" title="六、HBase读写流程"></a>六、HBase读写流程</h4><h5 id="写入流程"><a href="#写入流程" class="headerlink" title="写入流程"></a>写入流程</h5><p>1、客户端处理阶段  </p>
+<ul>
+<li>写入本地缓冲区  </li>
+<li>根据rowkey找到本地或远程的meta表  </li>
+<li>找到RegionServer,发起RPC请求  </li>
+</ul>
+<p>2、Region写入阶段  </p>
+<ul>
+<li>行锁处理</li>
+<li>更新所有写入的时间戳</li>
+<li>构建WALEdit记录</li>
+<li>将WALEdit写入WAL  </li>
+<li>写入WAL后，再将数据写入MemStore  </li>
+<li>释放锁  </li>
+<li>Sync wal</li>
+</ul>
+<p>3、MemStore Fluch阶段  </p>
+<ul>
+<li>触发时机<br>超过上限<br>Region中所有的MemStroe超过上限<br>RegionServer中所有HLog超过上限<br>定期刷新MemStore<br>手动执行flush  </li>
+<li>执行流程<br>prepare阶段，新建一个跳跃表（快照）<br>flush阶段<br>commit阶段，将生成的临时文件移动到列簇目录下，然后异步写，清空快照  </li>
+<li>HFile构建流程<br>构建各种block</li>
+</ul>
+<p>4、Region写入流程  </p>
+<blockquote>
+<p>追加写入HLog  </p>
+<ul>
+<li>*HLog持久化等级    </li>
+<li>HLog写入模型—生产者，消费者<br>随机写入MemStore  </li>
+<li>检查Chunk是否写满  </li>
+<li>在内存中重新创建KeyValue，在指定的offset位置</li>
+<li>将KeyValue写入跳跃表  </li>
+</ul>
+</blockquote>
+<p>5、bulkLoad功能</p>
+<blockquote>
+<p>批量导入数据使用这个，可以不经过regionServer</p>
+</blockquote>
+<h5 id="读取流程"><a href="#读取流程" class="headerlink" title="读取流程"></a>读取流程</h5><blockquote>
+<p>比较复杂，因为涉及多个region，而且有的在内存，有的在磁盘 </p>
+</blockquote>
+<p>1、client-&gt;server<br>  客户端缓存  </p>
+<p>2、scan体系  </p>
+<ul>
+<li>构建scanner iterator<br>RegionScaner-&gt;StroeScanner-&gt;(StoreFileScaner,MemStoreScaner)  </li>
+<li>过滤条件<br>keyRange,timeRange,布隆过滤器  </li>
+<li>打开HFile后，先把HFile的索引树加到内存，然后定位block(可能再blockCache或HDFS上)  </li>
+<li>从block中查到keyValue  </li>
+</ul>
+<p>3、Coprocessor  </p>
+<blockquote>
+<p>类似触发器，可以自定义get后的执行逻辑  </p>
+<ul>
+<li>Hbase默认由四种Observer  </li>
+<li>分为动态加载和静态加载  </li>
+</ul>
+</blockquote>
+<h4 id="Compaction-HFile"><a href="#Compaction-HFile" class="headerlink" title="Compaction(HFile)"></a>Compaction(HFile)</h4><h5 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h5><blockquote>
+<p>分为minor Compaction和major Compaction  </p>
+</blockquote>
+<p>合并小文件，减少文件数量，稳定随机读延迟<br>提高本地化率<br>清楚无效数据，减少存储  </p>
+<ul>
+<li><p>基本流程<br>独立线程，根据文件大小挑选合适的线程池  </p>
+</li>
+<li><p>触发机制 (源头是flush)<br>1、memstore flush<br>2、后台定期检查<br>3、手动触发  </p>
+</li>
+<li><p>待合并Hfile集合选择策略  </p>
+</li>
+<li><p>挑选合适的执行线程池  </p>
+</li>
+<li><p>HFile文件合并执行<br>1、独处keyValue，并归<br>2、临时文件移动到stroe目录<br>3、campaction输入文件和输出文件封装为KV写入Hlog<br>4、将store下compaction输入文件删除  </p>
+</li>
+<li><p>Compaction相关注意事项<br>1、io放大，要设置吞吐量<br>2、如果不是本地合并，网络IO<br>跨网络读可以避免，跨网络写没有办法避免  </p>
+</li>
+<li><p>高级策略<br>1、控制参与Compaction的文件数<br>2、FIFO—-过期删除策略<br>3、Tier-Based Compation—-文件选取策略  热点数据<br>4、Level Compation 分层，只解决了读最近数据的需求，没有解决major compaction问题<br>5、stripe Compaction 可以看成小region  </p>
+</li>
+</ul>
+<h4 id="HBase负载均衡"><a href="#HBase负载均衡" class="headerlink" title="HBase负载均衡"></a>HBase负载均衡</h4><h5 id="Region迁移"><a href="#Region迁移" class="headerlink" title="Region迁移"></a>Region迁移</h5><p>1、Region状态：<br>(1)unassign:表示region从rs下线  (典型场景:长时间没有写入)<br>(2)assign:表示从region在rs上线<br>2、Region合并<br>3、Region分裂策略  （事务，原子）<br>(1)超过一定大小  有参数可以设<br>(2)加快小表的分裂 有参数可以设<br>(3)减慢小表的分裂  各有优势</p>
+<h5 id="HBase负载均衡策略"><a href="#HBase负载均衡策略" class="headerlink" title="HBase负载均衡策略"></a>HBase负载均衡策略</h5><p>1、SimpleLoadBalancer<br>每个RegionServer的Region数量基本相同，但是没有考虑到热点数据问题<br>2、StochasticLoadBalancer<br>加权的复合值 包含Region个数，负载，读写请求数，Stroefile大小，memStore大小，数据本地率，移动代价  </p>
+<h4 id="宕机恢复原理"><a href="#宕机恢复原理" class="headerlink" title="宕机恢复原理"></a>宕机恢复原理</h4><h4 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h4><blockquote>
+<p>跨集群的复制  </p>
+</blockquote>
+<h4 id="备份与恢复"><a href="#备份与恢复" class="headerlink" title="备份与恢复"></a>备份与恢复</h4><blockquote>
+<p>snapshot工具</p>
+</blockquote>
+<h4 id="Hbase运维"><a href="#Hbase运维" class="headerlink" title="Hbase运维"></a>Hbase运维</h4><h5 id="Regionserver监控"><a href="#Regionserver监控" class="headerlink" title="Regionserver监控"></a>Regionserver监控</h5><p>Region数量，HFile数量，HFile大小，HLog数量<br>请求数量(读/写) RPC连接数，活跃请求队列Handler数量，flush队列长度，Conpaction队列长度<br> GC时长，新生代/老年代GC时长  </p>
+<h5 id="HBase表级监控"><a href="#HBase表级监控" class="headerlink" title="HBase表级监控"></a>HBase表级监控</h5><p>store file 数量 大小  </p>
+<h5 id="集群的基准性能测试"><a href="#集群的基准性能测试" class="headerlink" title="集群的基准性能测试"></a>集群的基准性能测试</h5><p>yahoo公司的YCSB工具，针对NoSQL的基准测试工具   </p>
+<h5 id="业务隔离"><a href="#业务隔离" class="headerlink" title="业务隔离"></a>业务隔离</h5><p>(1)队列级别隔离，优先级<br>(2)CPU/内存资源隔离，给RegionServer分组<br>(3)IO隔离，这个还做不到，只能靠部署新集群  </p>
+<h5 id="HBCK，一致性检查-对元数据进行检查，表的一致性，完整性检查"><a href="#HBCK，一致性检查-对元数据进行检查，表的一致性，完整性检查" class="headerlink" title="HBCK，一致性检查(对元数据进行检查，表的一致性，完整性检查)"></a>HBCK，一致性检查(对元数据进行检查，表的一致性，完整性检查)</h5><h5 id="核心参数配置"><a href="#核心参数配置" class="headerlink" title="核心参数配置"></a>核心参数配置</h5><p>(1)Region分裂大小<br>(2)BlockCache的lru占用JVM的大小，策略，堆外内存大小<br>(3)memstore flush阈值，单个memstore大小，region下memstroe的总量大小，jvm占用大小  regionserver上的memstore大小，时间间隔<br>(4)Compaction阈值，store文件数，最多参与minor compaction文件数，评估compaction大小的依据如果太大会分配线程，large和small Compaction线程数，store file导致更新阻塞的数量，major触发周期<br>(5)HLog，导致Region flush触发的大小，fluch写入线程数<br>(6)请求队列相关参数，服务端用于请求队列线程数（包含排队时间和服务时间），队列个数，读写占用队列的百分比，get/scan隔离参数<br>(7)其他,qps，开启snapshot，zk的检测时间，开启zk的multi-update，设置权限，….  </p>
+<h5 id="HBase表设计"><a href="#HBase表设计" class="headerlink" title="HBase表设计"></a>HBase表设计</h5><p>(1)同业务的在一个命名空间下<br>(2)根据业务设置不同的列簇<br>   最大的保留版本数<br>   是否开启blockcache<br>   bloomfilter策略<br>   ttl，数据失效时间，是在compaction环节<br>   compression，压缩算法，推荐SNAPPY<br>   数据编码算法，也是耗费CPU，慎重选择<br>   blocksize，文件曾写入，读取最小粒度，默认64K，get的话，可以设置小，scan的话，可以设置大<br>   dfs的副本数<br>   in_memory:数据量不大的话，get/scan频繁，可以设置这个<br>(3)表属性<br>   预分区，保持数据分布均匀<br>   uniformsplit适合随机数<br>   hexstringsplit适合16进制<br>   max_file 最大文件大小，默认10G，region中所有文件大于这个就分裂<br>   readonly 只读表<br>   compaction开启<br>   memstroe大小<br>   durablity，WAL持久化登记，根据写入吞吐量，数据重要性，控制策略  </p>
+<h5 id="salted-table"><a href="#salted-table" class="headerlink" title="salted table"></a>salted table</h5><p>   要对rowkey做散列然后%n，如果有5台机器，rowkey头加个0，1，2，3，4就可以了<br>   这个算法全局统一即可<br>   但是对scan不是太友好，要做多路归并   </p>
+<h4 id="系统调优"><a href="#系统调优" class="headerlink" title="系统调优"></a>系统调优</h4><h5 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h5><p>cms g1 都需要做ycsb测试<br>搭建测试环境,用gc_log_visualizer工具看  </p>
+<h5 id="操作系统调优"><a href="#操作系统调优" class="headerlink" title="操作系统调优"></a>操作系统调优</h5><p>1、并不是关掉swap，只是尽可能少用  vm.swappiness设置0==不积极使用swap<br>zone_reclaim_mode=0<br>2、操作系统一页是4K，数据库是使用hugePage（thp是一种大页理论），2MB ，但是线上需要关闭，因为有动态分配的延迟<br>3、hdfs<br>（1）短路读要开（可以绕过DN直接读数据）<br>（2）hedged read，可能会发出向多个副本的请求，谁先返回用谁<br>（3）本地率—靠major compaction来保证  </p>
+<h5 id="读取性能优化"><a href="#读取性能优化" class="headerlink" title="读取性能优化"></a>读取性能优化</h5><p>1、服务端优化<br>(1)读请求是否均衡  rowkey散列设计<br>(2)BlockCache设置是否合理<br>(3)HFile小文件是否过多<br>(4)Compaction是否影响太大<br>(5)数据本地率是不是很低<br>2、客户端优化<br>(1)scan缓存是否设置合理<br>(2)get是否使用批量请求<br>(3)是否可以显示指定列簇或列<br>(4)离线批量读是否禁止缓存<br>3、列簇设计<br>布隆过滤器是否设置  </p>
+<h5 id="写入性能优化"><a href="#写入性能优化" class="headerlink" title="写入性能优化"></a>写入性能优化</h5><p>1、服务端优化<br>(1)Region太少<br>(2)写请求是否均衡<br>(3)utilize Flash storage for WAL<br>将WAL写到SSD上  </p>
+<h5 id="HBase客户端优化"><a href="#HBase客户端优化" class="headerlink" title="HBase客户端优化"></a>HBase客户端优化</h5><p>1、bulkload写入（MapReduce）<br>2、写WAL的等级<br>3、put同步批量提交<br>4、put异步批量提交，可能会有丢失<br>5、keyvalue大小  </p>
+<h4 id="HBase运维案例分析"><a href="#HBase运维案例分析" class="headerlink" title="HBase运维案例分析"></a>HBase运维案例分析</h4><h4 id="HBase2-x核心技术"><a href="#HBase2-x核心技术" class="headerlink" title="HBase2.x核心技术"></a>HBase2.x核心技术</h4><ul>
+<li>保证核心步骤原子性,分布式场景下多状态不一致问题  </li>
+<li>in memory compaction功能，缓解写放大，缓解写路径GC压力  </li>
+<li>存储MOB数据，对大value支持好  </li>
+<li>读写全链路offheap话 ，就是非jvm内存  </li>
+<li>异步化设计  提升吞吐量  </li>
+</ul>
+<h4 id="高级话题"><a href="#高级话题" class="headerlink" title="高级话题"></a>高级话题</h4><p>1、二级索引<br>(1)局部二级索引 在一个表里<br>(2)全局二级索引 在两个表里<br>2、单行事务和跨行事务<br>跨行事务:pecolator 协议<br>3、HBase开发与测试流程</p>
 
     </article>
     <!-- license  -->
@@ -443,7 +601,7 @@ height:50vh;
             <p>原文作者：<a href="https://ruizhang81.github.io">大瑞</a>
             </p><p>原文链接：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/</a>
             </p><p>发表日期：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">May 13th 2020, 12:04:26 pm</a>
-            </p><p>更新日期：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">May 13th 2020, 2:22:07 pm</a>
+            </p><p>更新日期：<a href="https://ruizhang81.github.io/2020/05/13/Hbase原理与实践读书笔记/">June 3rd 2020, 3:56:01 pm</a>
             </p><p>版权声明：</p>
         </div>
     
@@ -575,7 +733,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#HBase原理与实践读书笔记"><span class="toc-number">1.</span> <span class="toc-text">HBase原理与实践读书笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#google三论文"><span class="toc-number">1.1.1.</span> <span class="toc-text">google三论文</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据结构和算法"><span class="toc-number">1.2.</span> <span class="toc-text">数据结构和算法</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#HBase原理与实践读书笔记"><span class="toc-number">1.</span> <span class="toc-text">HBase原理与实践读书笔记</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、概述"><span class="toc-number">1.1.</span> <span class="toc-text">一、概述</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#google三论文"><span class="toc-number">1.1.1.</span> <span class="toc-text">google三论文</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase是在HDFS之上的分布式KV数据库系统"><span class="toc-number">1.1.2.</span> <span class="toc-text">HBase是在HDFS之上的分布式KV数据库系统</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase数据模型"><span class="toc-number">1.1.3.</span> <span class="toc-text">HBase数据模型:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase体系结构"><span class="toc-number">1.1.4.</span> <span class="toc-text">HBase体系结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase系统特征"><span class="toc-number">1.1.5.</span> <span class="toc-text">HBase系统特征</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、数据结构和算法"><span class="toc-number">1.2.</span> <span class="toc-text">二、数据结构和算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#列簇（store）是LSM树"><span class="toc-number">1.2.1.</span> <span class="toc-text">列簇（store）是LSM树</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LSM内存部分-跳跃表，增删查-O-logN-一旦超过阈值，将会flush到磁盘上"><span class="toc-number">1.2.2.</span> <span class="toc-text">LSM内存部分:跳跃表，增删查 O(logN) 一旦超过阈值，将会flush到磁盘上</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LSM磁盘部分-布隆过滤器"><span class="toc-number">1.2.3.</span> <span class="toc-text">LSM磁盘部分:布隆过滤器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#布隆过滤器"><span class="toc-number">1.2.4.</span> <span class="toc-text">布隆过滤器</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#三、HBase依赖服务"><span class="toc-number">1.3.</span> <span class="toc-text">三、HBase依赖服务</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#zookeeper保证高可用"><span class="toc-number">1.3.1.</span> <span class="toc-text">zookeeper保证高可用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HDFS"><span class="toc-number">1.3.2.</span> <span class="toc-text">HDFS</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四、HBase客户端"><span class="toc-number">1.4.</span> <span class="toc-text">四、HBase客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#随机读取"><span class="toc-number">1.4.1.</span> <span class="toc-text">随机读取</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#扫描"><span class="toc-number">1.4.2.</span> <span class="toc-text">扫描</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#五、RegionServer-HBase最核心的模块"><span class="toc-number">1.5.</span> <span class="toc-text">五、RegionServer HBase最核心的模块</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#HLog"><span class="toc-number">1.5.1.</span> <span class="toc-text">HLog</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MemStore"><span class="toc-number">1.5.2.</span> <span class="toc-text">MemStore</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HFile"><span class="toc-number">1.5.3.</span> <span class="toc-text">HFile</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#BlockCache"><span class="toc-number">1.5.4.</span> <span class="toc-text">BlockCache</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#六、HBase读写流程"><span class="toc-number">1.6.</span> <span class="toc-text">六、HBase读写流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#写入流程"><span class="toc-number">1.6.1.</span> <span class="toc-text">写入流程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#读取流程"><span class="toc-number">1.6.2.</span> <span class="toc-text">读取流程</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Compaction-HFile"><span class="toc-number">1.7.</span> <span class="toc-text">Compaction(HFile)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#工作原理"><span class="toc-number">1.7.1.</span> <span class="toc-text">工作原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HBase负载均衡"><span class="toc-number">1.8.</span> <span class="toc-text">HBase负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Region迁移"><span class="toc-number">1.8.1.</span> <span class="toc-text">Region迁移</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase负载均衡策略"><span class="toc-number">1.8.2.</span> <span class="toc-text">HBase负载均衡策略</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宕机恢复原理"><span class="toc-number">1.9.</span> <span class="toc-text">宕机恢复原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#复制"><span class="toc-number">1.10.</span> <span class="toc-text">复制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#备份与恢复"><span class="toc-number">1.11.</span> <span class="toc-text">备份与恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hbase运维"><span class="toc-number">1.12.</span> <span class="toc-text">Hbase运维</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Regionserver监控"><span class="toc-number">1.12.1.</span> <span class="toc-text">Regionserver监控</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase表级监控"><span class="toc-number">1.12.2.</span> <span class="toc-text">HBase表级监控</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#集群的基准性能测试"><span class="toc-number">1.12.3.</span> <span class="toc-text">集群的基准性能测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#业务隔离"><span class="toc-number">1.12.4.</span> <span class="toc-text">业务隔离</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBCK，一致性检查-对元数据进行检查，表的一致性，完整性检查"><span class="toc-number">1.12.5.</span> <span class="toc-text">HBCK，一致性检查(对元数据进行检查，表的一致性，完整性检查)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#核心参数配置"><span class="toc-number">1.12.6.</span> <span class="toc-text">核心参数配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase表设计"><span class="toc-number">1.12.7.</span> <span class="toc-text">HBase表设计</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#salted-table"><span class="toc-number">1.12.8.</span> <span class="toc-text">salted table</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#系统调优"><span class="toc-number">1.13.</span> <span class="toc-text">系统调优</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#GC"><span class="toc-number">1.13.1.</span> <span class="toc-text">GC</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#操作系统调优"><span class="toc-number">1.13.2.</span> <span class="toc-text">操作系统调优</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#读取性能优化"><span class="toc-number">1.13.3.</span> <span class="toc-text">读取性能优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#写入性能优化"><span class="toc-number">1.13.4.</span> <span class="toc-text">写入性能优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HBase客户端优化"><span class="toc-number">1.13.5.</span> <span class="toc-text">HBase客户端优化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HBase运维案例分析"><span class="toc-number">1.14.</span> <span class="toc-text">HBase运维案例分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HBase2-x核心技术"><span class="toc-number">1.15.</span> <span class="toc-text">HBase2.x核心技术</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#高级话题"><span class="toc-number">1.16.</span> <span class="toc-text">高级话题</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -694,12 +852,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/WebAssembly多线程demo/">WebAssembly多线程demo</a>
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/mac上编译opencv-viz模块并运行demo/">mac上编译opencv+viz模块并运行demo</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/Node配置c-支持/">Node配置c++支持</a>
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/WebAssembly多线程demo/">WebAssembly多线程demo</a>
         </li>
     
     
@@ -709,7 +867,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/mac上编译opencv-viz模块并运行demo/">mac上编译opencv+viz模块并运行demo</a>
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href="/2019/05/12/Node配置c-支持/">Node配置c++支持</a>
         </li>
     
     
@@ -724,17 +882,15 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="flutter"><span class="iconfont-archer">&#xe606;</span>flutter</span>
     
+        <span class="sidebar-tag-name" data-tags="HBase"><span class="iconfont-archer">&#xe606;</span>HBase</span>
+    
         <span class="sidebar-tag-name" data-tags="WebAssembly"><span class="iconfont-archer">&#xe606;</span>WebAssembly</span>
-    
-        <span class="sidebar-tag-name" data-tags="node"><span class="iconfont-archer">&#xe606;</span>node</span>
-    
-        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
         <span class="sidebar-tag-name" data-tags="opencv"><span class="iconfont-archer">&#xe606;</span>opencv</span>
     
-        <span class="sidebar-tag-name" data-tags="Hbase"><span class="iconfont-archer">&#xe606;</span>Hbase</span>
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
-        <span class="sidebar-tag-name" data-tags="HBase"><span class="iconfont-archer">&#xe606;</span>HBase</span>
+        <span class="sidebar-tag-name" data-tags="node"><span class="iconfont-archer">&#xe606;</span>node</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
